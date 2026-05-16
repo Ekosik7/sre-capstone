@@ -7,7 +7,8 @@ on:
     branches: [main]
 
 env:
-  IMAGE_NAME: ghcr.io/${{ github.repository }}/sre-app
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/sre-app
+  
 
 jobs:
   build-and-push:
