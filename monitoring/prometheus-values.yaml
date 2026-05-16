@@ -1,0 +1,25 @@
+grafana:
+  enabled: true
+  adminPassword: "admin123"
+  service:
+    type: LoadBalancer
+
+prometheus:
+  prometheusSpec:
+    scrapeInterval: 15s
+    podMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: false
+
+alertmanager:
+  enabled: true
+  config:
+    global:
+      smtp_smarthost: 'smtp.gmail.com:587'
+      smtp_from: 'alerts@example.com'
+    route:
+      group_by: ['alertname']
+      receiver: 'email-alert'
+    receivers:
+      - name: 'email-alert'
+        email_configs:
+          - to: 'team@example.com'

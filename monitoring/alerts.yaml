@@ -1,0 +1,41 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: sre-alerts
+  namespace: monitoring
+spec:
+  groups:
+    - name: sre-app.rules
+      rules:
+        - alert: HighCPUUsage
+          expr: |
+            rate(container_cpu_usage_seconds_total{
+              namespace="production", container="sre-app"
+            }[5m]) > 0.8
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: "High CPU usage on sre-app"
+            description: "CPU > 80% for 2 minutes"
+
+        - alert: PodCrashLooping
+          expr: |
+            rate(kube_pod_container_status_restarts_total{
+              namespace="production"
+            }[15m]) > 0
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Pod is crash looping"
+
+        - alert: HighErrorRate
+          expr: |
+            rate(app_requests_total{status=~"5.."}[5m]) /
+            rate(app_requests_total[5m]) > 0.05
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Error rate > 5%"
