@@ -35,3 +35,20 @@ jobs:
           tags: |
             ${{ env.IMAGE_NAME }}:latest
             ${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy success
+        run: echo "Deploy step - cluster configured locally via kind"
+
+      - name: Deploy to Kubernetes
+        run: |
+          echo "Image ${{ env.IMAGE_NAME }}:${{ github.sha }} is ready"
+          echo "Deployment would target sre-capstone-cluster"
